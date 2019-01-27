@@ -16,6 +16,7 @@ public class Ex0 {
                 numer *= 10;
                 tempRes = numer / denom;
                 res *= (tempRes == 0) ? 1 : tempRes;
+                res %= 188888881;
                 numer %= denom;
             }
             System.out.println(res);
