@@ -4,7 +4,7 @@ public class Ex0 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int t = sc.nextInt();
-        long numer, denom, decimals, tempRes, res;
+        long numer, denom, decimals, res;
 
         for (int i = 0; i < t; i++) {
             numer = sc.nextInt();
@@ -14,8 +14,7 @@ public class Ex0 {
             numer %= denom;
             for (int j = 0; j < decimals; j++) {
                 numer *= 10;
-                tempRes = numer / denom;
-                res *= (tempRes == 0) ? 1 : tempRes;
+                res *= (numer / denom == 0) ? 1 : numer / denom;
                 res %= 188888881;
                 numer %= denom;
             }
