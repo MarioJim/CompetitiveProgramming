@@ -1,3 +1,5 @@
+package org.mariojim.Y2019.M01.D23;
+
 import java.util.Scanner;
 
 class Ex1 {

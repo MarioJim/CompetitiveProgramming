@@ -1,3 +1,5 @@
+package org.mariojim.Y2019.M02.D13;
+
 import java.util.Scanner;
 
 public class Ex1 {

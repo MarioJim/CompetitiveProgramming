@@ -1,3 +1,5 @@
+package org.mariojim.Y2019.M01.D30;
+
 import java.util.Scanner;
 
 public class Ex0part2 {
