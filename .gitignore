@@ -6,6 +6,9 @@
 .vscode/
 
 ### C++ ###
+# Cmake build debug
+Cpp/cmake-build-debug/
+
 # Prerequisites
 *.d
 
