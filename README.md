@@ -1,2 +1,2 @@
-# ClubDeProgra
-Prácticas y ejercicios durante las clases del Club de Programación
+# Competitive Programming
+Practice problems solved during Competitive Programming Club
