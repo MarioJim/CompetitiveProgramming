@@ -1,4 +1,4 @@
-package org.mariojim.Y2019.M09.D04;
+package Y2019.M09.D04;
 
 import java.util.HashMap;
 import java.util.Scanner;

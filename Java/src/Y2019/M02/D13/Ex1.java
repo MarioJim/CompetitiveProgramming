@@ -1,4 +1,4 @@
-package org.mariojim.Y2019.M02.D13;
+package Y2019.M02.D13;
 
 import java.util.Scanner;
 
