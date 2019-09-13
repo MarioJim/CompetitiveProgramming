@@ -6,14 +6,6 @@
 
 using namespace std;
 
-struct queueComparator {
-    bool operator() (const tuple<int, int, int> tuple1, const tuple<int, int, int> tuple2) const {
-        auto [ key1, frequency1, timesToBeAdded1 ] = tuple1;
-        auto [ key2, frequency2, timesToBeAdded2 ] = tuple2;
-        return frequency1 / timesToBeAdded1 < frequency2 / timesToBeAdded2;
-    }
-};
-
 int main() {
     int n, k, num;
     // key, frequency
@@ -27,7 +19,12 @@ int main() {
         keyFreq[num]++;
     }
 
-    priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, queueComparator> keysToAdd;
+    auto compareFunc = [](const tuple<int, int, int> tuple1, const tuple<int, int, int> tuple2) {
+        auto[key1, frequency1, timesToBeAdded1] = tuple1;
+        auto[key2, frequency2, timesToBeAdded2] = tuple2;
+        return frequency1 / timesToBeAdded1 < frequency2 / timesToBeAdded2;
+    };
+    priority_queue<tuple<int, int, int>, vector<tuple<int, int, int>>, decltype(compareFunc)> keysToAdd(compareFunc);
 
     // Add all pairs to keysToAdd
     for (pair<int, int> pairIter : keyFreq)
