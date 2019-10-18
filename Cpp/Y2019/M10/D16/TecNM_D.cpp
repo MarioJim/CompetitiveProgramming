@@ -1,15 +1,17 @@
 #include <iostream>
 #include <vector>
+#include <set>
 #include <unordered_set>
 using namespace std;
 
 vector<unordered_set<string>> citiesForest;
 
-int cityTreeThatIncludesCity(string city) {
+set<int> cityTreeThatIncludesCity(const string& city) {
+    set<int> result;
     for (int i = 0; i < citiesForest.size(); ++i)
         if (citiesForest[i].find(city) != citiesForest[i].end())
-            return i;
-    return -1;
+            result.insert(i);
+    return result;
 }
 
 int main() {
@@ -20,17 +22,24 @@ int main() {
         cin >> numCities;
         unordered_set<string> citiesTree;
         string city;
-        int treeToAddTo = -1;
+        set<int> citiesToCombine;
         for (int j = 0; j < numCities; ++j) {
             cin >> city;
             citiesTree.insert(city);
-            if (treeToAddTo == -1)
-                treeToAddTo = cityTreeThatIncludesCity(city);
+            set<int> citiesToCombineCity = cityTreeThatIncludesCity(city);
+            citiesToCombine.insert(citiesToCombineCity.begin(), citiesToCombineCity.end());
         }
-        if (treeToAddTo != -1)
-            citiesForest[treeToAddTo].insert(citiesTree.begin(), citiesTree.end());
-        else
+        if (citiesToCombine.empty())
             citiesForest.push_back(citiesTree);
+        else {
+            citiesForest[*(citiesToCombine.begin())].insert(citiesTree.begin(), citiesTree.end());
+            for (auto it = ++citiesToCombine.begin(); it != citiesToCombine.end(); ++it) {
+                citiesForest[*(citiesToCombine.begin())].insert(citiesForest[*it].begin(), citiesForest[*it].end());
+                auto tempIt = citiesForest.begin();
+                for (int j = 0; j < *it; ++j) ++tempIt;
+                citiesForest.erase(tempIt);
+            }
+        }
     }
     string from, to;
     cin >> from >> to;
