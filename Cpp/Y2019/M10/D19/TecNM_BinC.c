@@ -5,12 +5,9 @@
 #include <stdbool.h>
 
 int numPeople;
-double* memoization;
 int sizeMemoArr;
 
-struct R {
-    int p1, p2, p3;
-};
+struct R { int p1, p2, p3; };
 
 struct R* R_new() {
     struct R* r = malloc(sizeof(struct R));
@@ -37,9 +34,7 @@ void R_push(struct R* r, int num) {
     r->p3 = num;
 }
 
-struct ID {
-    bool* _id;
-};
+struct ID { bool* _id; };
 
 struct ID* ID_new() {
     struct ID* id = malloc(sizeof(struct ID));
@@ -74,19 +69,17 @@ int ID_getIntRepresentation(struct ID* id) {
     return result;
 }
 
-int getMaxIntRepresentation() {
+struct ID* ID_getMaxIntRepresentation() {
     struct ID* id = ID_new();
     for (int i = 0; i < numPeople; ++i) id->_id[i] = true;
-    return ID_getIntRepresentation(id) + 1;
+    return id;
 }
 
 void ID_print(struct ID* id) {
     printf("%d %d %d %d\n", id->_id[0], id->_id[1], id->_id[2], id->_id[3]);
 }
 
-struct Point {
-    double x, y;
-};
+struct Point { double x, y; };
 
 struct Point* Point_new() {
     struct Point* p = malloc(sizeof(struct Point));
@@ -108,10 +101,7 @@ struct Point* Point_substract(struct Point* p1, struct Point* p2) {
 
 struct Point* peopleCoords;
 
-struct Circle {
-    struct Point* c;
-    double r;
-};
+struct Circle { struct Point* c; double r; };
 
 struct Circle* Circle_new() {
     struct Circle* c = malloc(sizeof(struct Circle));
@@ -147,8 +137,7 @@ struct Circle* Circle_new3Int(int p1, int p2, int p3) {
             - p3tr->x * (p2tr->x * p2tr->x + p2tr->y * p2tr->y)) / dTrans;
     c->c = Point_new2Doubles(xTrans + peopleCoords[p1].x, yTrans + peopleCoords[p1].y);
     c->r = hypot(xTrans, yTrans);
-    free(p2tr);
-    free(p3tr);
+    free(p2tr); free(p3tr);
     return c;
 }
 
@@ -167,7 +156,7 @@ bool Circle_includes(struct Circle* c, int point) {
 }
 
 // https://en.wikipedia.org/wiki/Smallest-circle_problem#Matou%C5%A1ek,_Sharir,_Welzl's_algorithm
-void msw(struct ID* id) {
+struct Circle* msw(struct ID* id) {
 //    printf("Entered msw with id: ");
 //    ID_print(id);
     // R is the set of points that defines the circle
@@ -208,34 +197,13 @@ void msw(struct ID* id) {
         free(R); R = newR;
         free(circleR); circleR = Circle_newInts(R);
     }
-//    printf("result: %lf\n", circleR->r);
-    int Rsize = R_size(R);
-//    if (Rsize == 2) printf("R: %d %d\n", R->p1, R->p2);
-//    else printf("R: %d %d %d\n", R->p1, R->p2, R->p3);
-    for (int i = 0; i < sizeMemoArr; ++i) {
-        struct ID* tempID = ID_newInt(i);
-        bool containsR = false;
-        switch (Rsize) {
-            case 1: containsR = tempID->_id[R->p1]; break;
-            case 2: containsR = tempID->_id[R->p1] && tempID->_id[R->p2]; break;
-            case 3: containsR = tempID->_id[R->p1] && tempID->_id[R->p2] && tempID->_id[R->p3];
-        }
-        if (containsR && memoization[i] < circleR->r) {
-            memoization[i] = circleR->r;
-        }
-    }
     free(R); // Also frees newR because both point to the same address
-    free(circleR);
+    return circleR;
 }
 
 int main() {
     int sizeX, sizeY;
     scanf("%d %d %d", &sizeX, &sizeY, &numPeople);
-    sizeMemoArr = getMaxIntRepresentation();
-    printf("size: %lu", sizeMemoArr * sizeof(double));
-    // Make an array to store the results of every possible set of points and pre-fill it with -1's
-    memoization = calloc(sizeMemoArr, sizeof(double));
-    for (int i = 0; i < sizeMemoArr; ++i) memoization[i] = -1;
     // Save points
     peopleCoords = malloc(numPeople * sizeof(struct Point));
     for (int i = 0; i < numPeople; ++i) {
@@ -243,11 +211,16 @@ int main() {
         scanf("%lf %lf", &x, &y);
         peopleCoords[i] = *Point_new2Doubles(x, y);
     }
-    // Pre-generate memoization array
-    for (int i = sizeMemoArr - 1; i > 0; --i)
-        if (memoization[i] == -1) {
-            msw(ID_newInt(i));
-        }
+    struct Circle* maxCircle = msw(ID_getMaxIntRepresentation());
+    int* orderByDistToCenter = malloc(numPeople * sizeof(int));
+    for (int i = 0; i < numPeople - 1; ++i)
+        for (int j = 0; j < numPeople - i - 1; ++j)
+            if (orderByDistToCenter[j] > orderByDistToCenter[j+1]) {
+                int temp = orderByDistToCenter[j];
+                orderByDistToCenter[j] = orderByDistToCenter[j+1];
+                orderByDistToCenter[j+1] = temp;
+            }
+    free(maxCircle);
     // Receive queries
     int numQueries;
     scanf("%d", &numQueries);
@@ -260,10 +233,11 @@ int main() {
             scanf("%d", &personIndex);
             ID_turnBitOn(id, personIndex - 1);
         }
-        printf("%.9f\n", memoization[ID_getIntRepresentation(id)]);
+        struct Circle* circle = msw(id);
         free(id);
+        printf("%.9f\n", circle->r);
+        free(circle);
     }
-    free(memoization);
     free(peopleCoords);
     return 0;
 }
