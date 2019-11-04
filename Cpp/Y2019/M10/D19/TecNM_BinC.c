@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 int numPeople;
-int sizeMemoArr;
 
 struct R { int p1, p2, p3; };
 
@@ -101,7 +100,7 @@ struct Point* Point_substract(struct Point* p1, struct Point* p2) {
 
 struct Point* peopleCoords;
 
-struct Circle { struct Point* c; double r; };
+struct Circle { struct Point* c; long double r; };
 
 struct Circle* Circle_new() {
     struct Circle* c = malloc(sizeof(struct Circle));
@@ -121,7 +120,7 @@ struct Circle* Circle_new2Int(int p1, int p2) {
     c->c = Point_new2Doubles(
             (peopleCoords[p1].x + peopleCoords[p2].x) / 2.0,
             (peopleCoords[p1].y + peopleCoords[p2].y) / 2.0);
-    c->r = hypot(peopleCoords[p1].x - c->c->x, peopleCoords[p1].y - c->c->y);
+    c->r = hypotl(peopleCoords[p1].x - c->c->x,  peopleCoords[p1].y - c->c->y);
     return c;
 }
 
@@ -136,7 +135,7 @@ struct Circle* Circle_new3Int(int p1, int p2, int p3) {
     double yTrans = (p2tr->x * (p3tr->x * p3tr->x + p3tr->y * p3tr->y)
             - p3tr->x * (p2tr->x * p2tr->x + p2tr->y * p2tr->y)) / dTrans;
     c->c = Point_new2Doubles(xTrans + peopleCoords[p1].x, yTrans + peopleCoords[p1].y);
-    c->r = hypot(xTrans, yTrans);
+    c->r = hypotl(xTrans, yTrans);
     free(p2tr); free(p3tr);
     return c;
 }
@@ -152,7 +151,7 @@ struct Circle* Circle_newInts(struct R* R) {
 
 bool Circle_includes(struct Circle* c, int point) {
     if (peopleCoords[point].x == c->c->x && peopleCoords[point].y == c->c->y) return true;
-    return hypot(peopleCoords[point].x - c->c->x, peopleCoords[point].y - c->c->y) <= c->r * (1 + 1e-14);
+    return hypotl(peopleCoords[point].x - c->c->x, peopleCoords[point].y - c->c->y) <= c->r * (1 + 1e-14);
 }
 
 // https://en.wikipedia.org/wiki/Smallest-circle_problem#Matou%C5%A1ek,_Sharir,_Welzl's_algorithm
@@ -171,7 +170,7 @@ struct Circle* msw(struct ID* id) {
             continue;
         }
         newR = R_new();
-        double minRadius = DBL_MAX;
+        long double minRadius = LDBL_MAX;
         struct Circle* c1p = Circle_new2Int(R->p1, i);
         struct Circle* c2p = Circle_new2Int(R->p2, i);
         struct Circle* c12p = Circle_new3Int(R->p1, R->p2, i);
@@ -235,7 +234,7 @@ int main() {
         }
         struct Circle* circle = msw(id);
         free(id);
-        printf("%.9f\n", circle->r);
+        printf("%.9Lf\n", circle->r);
         free(circle);
     }
     free(peopleCoords);
