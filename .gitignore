@@ -4,6 +4,7 @@
 ### C++ ###
 # Cmake build debug
 Cpp/cmake-build-debug/
+Cpp/.idea/
 
 # Compiled Object files
 *.o
